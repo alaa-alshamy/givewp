@@ -11,6 +11,16 @@
 		position: absolute;
 		font-size: 14px;
 	}
+
+	&.show-only-help-icon {
+		.give-label {
+			position: absolute;
+			font-size: 0;
+			right: 0;
+			top: 31%;
+			padding-right: 14px;
+		}
+	}
 }
 
 .ffm-checkbox-field {

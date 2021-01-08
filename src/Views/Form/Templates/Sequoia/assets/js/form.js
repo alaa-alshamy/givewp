@@ -452,7 +452,46 @@
 		inputs.filter( function( input ) {
 			return ! input.required;
 		} ).map( function( input ) {
-			input.placeholder += templateL10n.optionalLabel;
+			if ( input.placeholder && -1 === input.placeholder.indexOf( templateL10n.optionalLabel ) ) {
+				input.placeholder += templateL10n.optionalLabel;
+			} else if ( input.previousElementSibling && input.previousElementSibling.childNodes ) {
+				input.placeholder = input.previousElementSibling.childNodes[ 0 ].nodeValue.trim() + templateL10n.optionalLabel;
+			}
+		} );
+	}
+
+	/**
+	 * Denote non-required FFM fields as optional.
+	 *
+	 * @since 2.9.6
+	 */
+	function setupFFMInputLabels() {
+		$( '#give-ffm-section input[data-type="text"]' ).each( function() {
+			const input = $( this ).get( 0 );
+			const hasLabel = input.previousElementSibling && input.previousElementSibling.childNodes;
+
+			input.parentElement.classList.add( 'show-only-help-icon' );
+
+			if ( hasLabel ) {
+				const tooltip = input.previousElementSibling.querySelector( '.give-tooltip' );
+
+				if ( tooltip ) {
+					// tooltip.classList.add('hint--left');
+					// tooltip.classList.remove('hint--top');
+				}
+			}
+
+			if ( input.required ) {
+				input.placeholder = input.previousElementSibling.childNodes[ 0 ].nodeValue.trim();
+
+				return;
+			}
+
+			if ( input.placeholder && -1 === input.placeholder.indexOf( templateL10n.optionalLabel ) ) {
+				input.placeholder += templateL10n.optionalLabel;
+			} else if ( hasLabel ) {
+				input.placeholder = input.previousElementSibling.childNodes[ 0 ].nodeValue.trim() + templateL10n.optionalLabel;
+			}
 		} );
 	}
 
@@ -515,24 +554,25 @@
 
 		$( '#give-ffm-section input' ).each( function() {
 			switch ( $( this ).prop( 'type' ) ) {
-				case 'checkbox': {
+				case 'checkbox':
 					if ( $( this ).prop( 'checked' ) ) {
 						$( this ).parent().addClass( 'checked' );
 					} else {
 						$( this ).parent().removeClass( 'checked' );
 					}
 					break;
-				}
-				case 'radio': {
+
+				case 'radio':
 					if ( $( this ).prop( 'checked' ) ) {
 						$( this ).parent().addClass( 'selected' );
 					} else {
 						$( this ).parent().removeClass( 'selected' );
 					}
 					break;
-				}
 			}
 		} );
+
+		setupFFMInputLabels();
 	}
 
 	/**
